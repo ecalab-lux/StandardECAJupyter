@@ -1,0 +1,18 @@
+version: "3" # GPU pass requires docker-compose >1.28
+# TARGET_MACHINE is defined in .env
+
+services:
+  jupyterlab:
+    restart: "no"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - TARGET_MACHINE=$TARGET_MACHINE
+    image: ecalab/jupyterlab:$TARGET_MACHINE
+    container_name: jupyterlab
+    ports:
+      - 8888:8888
+    volumes:
+      - ./Notebooks:/home/jupyter/Notebooks
+    command: ["jupyter", "lab", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--ServerApp.password=''", "--ServerApp.token=''", "--ServerApp.base_url=jupyterlab", "--ServerApp.allow_origin_pat=.*", "--ServerApp.contents_manager_class=jupytext.TextFileContentsManager"]
