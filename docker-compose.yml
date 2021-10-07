@@ -1,8 +1,7 @@
 version: "3" # GPU pass requires docker-compose >1.28
 # create an .env file with the following variables
 # TARGET_MACHINE=[localhost|ecadockerhub]
-# J_USER=user for traefik http authentication
-# J_PASS=password
+# J_PASS=password generated with notebook.auth.passwd(algorithm="SHA1")
 
 services:
   jupyterlab:
@@ -18,4 +17,5 @@ services:
       - 8888:8888
     volumes:
       - ./Notebooks:/home/jupyter/Notebooks
-    command: ["jupyter", "lab", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--ServerApp.password=''", "--ServerApp.token=''", "--ServerApp.base_url=jupyterlab", "--ServerApp.allow_origin_pat=.*", "--ServerApp.contents_manager_class=jupytext.TextFileContentsManager"]
+    # This command enables HTTPS access only, with a self-signed certificate
+    command: ["jupyter", "lab", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--ServerApp.password=$J_PASS", "--ServerApp.token=", "--ServerApp.base_url=jupyter", "--ServerApp.allow_origin_pat=.*", "--ServerApp.contents_manager_class=jupytext.TextFileContentsManager", "--ServerApp.certfile=/home/jupyter/mycert.pem", "--ServerApp.keyfile=/home/jupyter/mykey.key"]
