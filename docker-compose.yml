@@ -1,5 +1,8 @@
 version: "3" # GPU pass requires docker-compose >1.28
-# TARGET_MACHINE is defined in .env
+# create an .env file with the following variables
+# TARGET_MACHINE=[localhost|ecadockerhub]
+# J_USER=user for traefik http authentication
+# J_PASS=password
 
 services:
   jupyterlab:
