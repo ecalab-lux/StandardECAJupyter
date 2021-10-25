@@ -5,7 +5,7 @@ version: "3" # GPU pass requires docker-compose >1.28
 
 services:
   jupyterlab:
-    restart: "no"
+    restart: "unless-stopped"
     build:
       context: .
       dockerfile: Dockerfile
@@ -19,3 +19,20 @@ services:
       - ./Notebooks:/home/jupyter/Notebooks
     # This command enables HTTPS access only, with a self-signed certificate
     command: ["jupyter", "lab", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--ServerApp.password=$J_PASS", "--ServerApp.token=", "--ServerApp.base_url=jupyter", "--ServerApp.allow_origin_pat=.*", "--ServerApp.contents_manager_class=jupytext.TextFileContentsManager", "--ServerApp.certfile=/home/jupyter/mycert.pem", "--ServerApp.keyfile=/home/jupyter/mykey.key"]
+
+services:
+  jupyterlab-dash:
+    restart: "unless-stopped"
+    build:
+      context: .
+      dockerfile: Dockerfile-dash
+      args:
+        - TARGET_MACHINE=$TARGET_MACHINE
+    image: ecalab/jupyterlab-dash:$TARGET_MACHINE
+    container_name: jupyterlab-dash
+    ports:
+      - 9100:9100
+    volumes:
+      - ./Notebooks:/home/jupyter/Notebooks
+    # This command enables HTTPS access only, with a self-signed certificate
+    command: ["jupyter", "lab", "--port=9100", "--no-browser", "--ip=0.0.0.0", "--ServerApp.password=$J_PASS", "--ServerApp.token=", "--ServerApp.base_url=jupyter-dash", "--ServerApp.allow_origin_pat=.*", "--ServerApp.contents_manager_class=jupytext.TextFileContentsManager", "--ServerApp.certfile=/home/jupyter/mycert.pem", "--ServerApp.keyfile=/home/jupyter/mykey.key"]
